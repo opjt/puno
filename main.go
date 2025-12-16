@@ -17,7 +17,7 @@ func main() {
 
 	switch command {
 	case "serve":
-		core.RunServer()
+		core.RunServer(core.Modules)
 	case "genkey":
 		vKey, err := cmd.GenKey()
 		if err != nil {
