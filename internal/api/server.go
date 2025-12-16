@@ -1,4 +1,4 @@
-package httpr
+package api
 
 import (
 	"context"

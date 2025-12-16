@@ -1,30 +1,28 @@
-package httpr
+package api
 
 import (
-	v1 "ohp/internal/server/httpr/v1"
+	"ohp/internal/api/push"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"go.uber.org/fx"
 )
 
-type RouterParams struct {
-	fx.In
-	V1 chi.Router `name:"v1"`
-}
-
-func NewRouter(params RouterParams) *chi.Mux {
+func NewRouter(pushHandler *push.PushHandler) *chi.Mux {
 	r := chi.NewRouter()
 
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 
-	r.Mount("/api/v1", params.V1)
+	r.Mount("/push", pushHandler.Routes())
 
 	return r
 }
 
 var routeModule = fx.Module("router",
-	v1.Module,
+	fx.Provide(
+		push.NewPushHandler,
+	),
+
 	fx.Provide(NewRouter),
 )

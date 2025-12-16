@@ -1,11 +1,11 @@
 package core
 
 import (
-	"ohp/internal/server/httpr"
+	"ohp/internal/api"
 
 	"go.uber.org/fx"
 )
 
 var Modules = fx.Options(
-	httpr.Module,
+	api.Module,
 )
