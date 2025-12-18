@@ -14,10 +14,7 @@ type Env struct {
 
 	Log     Log     `env:", prefix=LOG_"`
 	Service Service `env:", prefix=SERVICE_"`
-}
-
-type SwitApi struct {
-	Url string `env:"URL"`
+	Vapid   Vapid   `env:", prefix=VAPID_"`
 }
 
 type Log struct {
@@ -26,6 +23,11 @@ type Log struct {
 
 type Service struct {
 	Port int `env:"PORT,default=8282"`
+}
+
+type Vapid struct {
+	PublicKey  string `env:"PUBLIC_KEY"`
+	PrivateKey string `env:"PRIVATE_KEY"`
 }
 
 func NewEnv() (Env, error) {

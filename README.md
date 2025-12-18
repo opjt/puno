@@ -7,4 +7,4 @@
 1. MVP 구현
    - webhook/API -> push 알림
    - PWA로 구현. 추후 앱 개발
-   - 간단한 상호작용 구현(accept,reject), pull 방식으로 리턴값 받도록
+   - 간단한 상호작용 구현(accept,reject), polling 방식으로 리턴값 받도록
