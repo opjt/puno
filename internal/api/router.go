@@ -4,6 +4,7 @@ import (
 	"ohp/internal/api/handler"
 	middle "ohp/internal/api/middleware"
 	"ohp/internal/pkg/config"
+	"ohp/internal/pkg/token"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -13,6 +14,8 @@ import (
 func NewRouter(
 	pushHandler *handler.PushHandler,
 	authHandler *handler.AuthHandler,
+
+	tokenProvider *token.TokenProvider,
 	env config.Env,
 ) *chi.Mux {
 	r := chi.NewRouter()
@@ -21,8 +24,11 @@ func NewRouter(
 	r.Use(middleware.Recoverer)
 	r.Use(middle.CorsMiddleware(env.FrontUrl))
 
-	r.Mount("/push", pushHandler.Routes())
 	r.Mount("/auth", authHandler.Routes())
+	r.Group(func(r chi.Router) {
+		r.Use(middle.AuthMiddleware(tokenProvider))
+		r.Mount("/push", pushHandler.Routes())
+	})
 
 	return r
 }

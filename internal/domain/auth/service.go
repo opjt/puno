@@ -9,7 +9,6 @@ import (
 	"ohp/internal/domain/user"
 	"ohp/internal/pkg/config"
 	"ohp/internal/pkg/token"
-	"time"
 )
 
 type AuthService struct {
@@ -21,9 +20,9 @@ type AuthService struct {
 func NewAuthService(
 	env config.Env,
 	userService *user.UserService,
+	tokenProvider *token.TokenProvider,
 ) *AuthService {
 
-	tokenProvider := token.NewTokenProvider(env.JWTSecret, "ohp-api", 24*time.Hour) // TODO: env 전환 필요
 	return &AuthService{
 		githubConfig:  env.Github,
 		userService:   userService,
