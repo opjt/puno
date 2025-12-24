@@ -57,5 +57,4 @@ func (h *UserHandler) Whoami(w http.ResponseWriter, r *http.Request) {
 		Email:  user.Email,
 	}
 	wrapper.RespondJSON(w, http.StatusOK, resp)
-
 }

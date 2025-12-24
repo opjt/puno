@@ -1,7 +1,7 @@
 version: "2"
 sql:
   - schema: "db/schema/"
-    queries: ["internal/domain/auth", "internal/domain/user", "internal/domain/token"]
+    queries: ["internal/domain/auth", "internal/domain/user", "internal/domain/token", "internal/domain/endpoint"]
     engine: "postgresql" 
     gen:
       go:

@@ -19,3 +19,18 @@ CREATE TABLE
         created_at TIMESTAMP NOT NULL DEFAULT now(),
         UNIQUE (user_id, p256dh_key, auth_key, endpoint)
     );
+
+-- endpoints
+CREATE TABLE
+    endpoints (
+        id UUID PRIMARY KEY DEFAULT uuidv7(),
+        user_id UUID NOT NULL REFERENCES users (id),
+        name TEXT NOT NULL,
+        endpoint TEXT NOT NULL UNIQUE,
+        notification_enabled BOOLEAN NOT NULL DEFAULT true,
+        notification_disabled_at TIMESTAMP NULL,
+        created_at TIMESTAMP NOT NULL DEFAULT now(),
+
+        CONSTRAINT endpoints_user_name_uniq
+        UNIQUE (user_id, name)
+    );

@@ -15,6 +15,7 @@ func NewRouter(
 	pushHandler *handler.PushHandler,
 	authHandler *handler.AuthHandler,
 	userHandler *handler.UserHandler,
+	endpointHandler *handler.EndpointHandler,
 
 	tokenProvider *token.TokenProvider,
 	env config.Env,
@@ -30,6 +31,7 @@ func NewRouter(
 		r.Use(middle.AuthMiddleware(tokenProvider))
 		r.Mount("/push", pushHandler.Routes())
 		r.Mount("/users", userHandler.Routes())
+		r.Mount("/endpoints", endpointHandler.Routes())
 	})
 
 	return r
@@ -40,6 +42,7 @@ var routeModule = fx.Module("router",
 		handler.NewPushHandler,
 		handler.NewAuthHandler,
 		handler.NewUserHandler,
+		handler.NewEndpointHandler,
 	),
 
 	fx.Provide(NewRouter),

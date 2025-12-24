@@ -10,6 +10,16 @@ import (
 	"github.com/google/uuid"
 )
 
+type Endpoint struct {
+	ID                     uuid.UUID
+	UserID                 uuid.UUID
+	Name                   string
+	Endpoint               string
+	NotificationEnabled    bool
+	NotificationDisabledAt *time.Time
+	CreatedAt              time.Time
+}
+
 type PushToken struct {
 	ID        uuid.UUID
 	UserID    uuid.UUID
