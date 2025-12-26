@@ -2,10 +2,13 @@ package endpoint
 
 import (
 	"context"
+	"errors"
 	db "ohp/internal/infrastructure/db/postgresql"
 
 	"github.com/google/uuid"
 )
+
+var ErrDuplicateToken = errors.New("duplicate endpoint token")
 
 type EndpointRepository interface {
 	Add(ctx context.Context, params insertEndpointParams) error
@@ -33,7 +36,11 @@ func (r endpointRepository) Add(ctx context.Context, params insertEndpointParams
 		Endpoint: params.endpoint,
 	})
 	if err != nil {
+		if db.IsUniqueViolation(err) {
+			return ErrDuplicateToken
+		}
 		return err
+
 	}
 	return nil
 }

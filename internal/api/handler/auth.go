@@ -75,5 +75,5 @@ func (h *AuthHandler) OauthGithubCallback(w http.ResponseWriter, r *http.Request
 		MaxAge:   3600 * 24, // 1일
 	})
 
-	http.Redirect(w, r, h.frontUrl+"/", http.StatusFound)
+	http.Redirect(w, r, h.frontUrl+"/p", http.StatusFound)
 }
