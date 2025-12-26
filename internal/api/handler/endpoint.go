@@ -44,10 +44,10 @@ func (h *EndpointHandler) Add(ctx context.Context, req reqAddEndpoint) (interfac
 }
 
 type resListEndpoint struct {
-	ID       uuid.UUID `json:"id"`
-	Name     string    `json:"name"`
-	Endpoint string    `json:"endpoint"`
-	Active   bool      `json:"active"`
+	ID     uuid.UUID `json:"id"`
+	Name   string    `json:"name"`
+	Token  string    `json:"token"`
+	Active bool      `json:"active"`
 }
 
 func (h *EndpointHandler) GetList(w http.ResponseWriter, r *http.Request) {
@@ -58,13 +58,13 @@ func (h *EndpointHandler) GetList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var result []resListEndpoint
+	result := make([]resListEndpoint, 0, len(endpoints))
 	for _, endpoint := range endpoints {
 		result = append(result, resListEndpoint{
-			ID:       endpoint.ID,
-			Name:     endpoint.Name,
-			Endpoint: endpoint.Endpoint,
-			Active:   true,
+			ID:     endpoint.ID,
+			Name:   endpoint.Name,
+			Token:  endpoint.Token,
+			Active: true,
 		})
 	}
 

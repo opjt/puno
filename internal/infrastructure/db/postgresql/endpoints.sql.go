@@ -15,29 +15,29 @@ const createEndpoint = `-- name: CreateEndpoint :one
 INSERT INTO endpoints (
     user_id,
     name,
-    endpoint
+    token
 ) VALUES (
     $1, 
     $2, 
     $3
 )
-RETURNING id, user_id, name, endpoint, notification_enabled, notification_disabled_at, created_at
+RETURNING id, user_id, name, token, notification_enabled, notification_disabled_at, created_at
 `
 
 type CreateEndpointParams struct {
-	UserID   uuid.UUID
-	Name     string
-	Endpoint string
+	UserID uuid.UUID
+	Name   string
+	Token  string
 }
 
 func (q *Queries) CreateEndpoint(ctx context.Context, arg CreateEndpointParams) (Endpoint, error) {
-	row := q.db.QueryRow(ctx, createEndpoint, arg.UserID, arg.Name, arg.Endpoint)
+	row := q.db.QueryRow(ctx, createEndpoint, arg.UserID, arg.Name, arg.Token)
 	var i Endpoint
 	err := row.Scan(
 		&i.ID,
 		&i.UserID,
 		&i.Name,
-		&i.Endpoint,
+		&i.Token,
 		&i.NotificationEnabled,
 		&i.NotificationDisabledAt,
 		&i.CreatedAt,
@@ -45,8 +45,24 @@ func (q *Queries) CreateEndpoint(ctx context.Context, arg CreateEndpointParams) 
 	return i, err
 }
 
+const deleteEndpointByToken = `-- name: DeleteEndpointByToken :exec
+DELETE FROM endpoints
+WHERE token = $1
+  AND user_id = $2
+`
+
+type DeleteEndpointByTokenParams struct {
+	Token  string
+	UserID uuid.UUID
+}
+
+func (q *Queries) DeleteEndpointByToken(ctx context.Context, arg DeleteEndpointByTokenParams) error {
+	_, err := q.db.Exec(ctx, deleteEndpointByToken, arg.Token, arg.UserID)
+	return err
+}
+
 const findByUserID = `-- name: FindByUserID :many
-SELECT id, user_id, name, endpoint, notification_enabled, notification_disabled_at, created_at FROM endpoints
+SELECT id, user_id, name, token, notification_enabled, notification_disabled_at, created_at FROM endpoints
 WHERE user_id = $1
 `
 
@@ -63,7 +79,7 @@ func (q *Queries) FindByUserID(ctx context.Context, userID uuid.UUID) ([]Endpoin
 			&i.ID,
 			&i.UserID,
 			&i.Name,
-			&i.Endpoint,
+			&i.Token,
 			&i.NotificationEnabled,
 			&i.NotificationDisabledAt,
 			&i.CreatedAt,

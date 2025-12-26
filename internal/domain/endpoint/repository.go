@@ -41,7 +41,7 @@ func (r endpointRepository) FindByUserID(ctx context.Context, userID uuid.UUID) 
 		result = append(result, Endpoint{
 			ID:        endpoint.ID,
 			Name:      endpoint.Name,
-			Endpoint:  endpoint.Endpoint,
+			Token:     endpoint.Token,
 			CreatedAt: endpoint.CreatedAt,
 		})
 	}
@@ -49,9 +49,9 @@ func (r endpointRepository) FindByUserID(ctx context.Context, userID uuid.UUID) 
 }
 func (r endpointRepository) Add(ctx context.Context, params insertEndpointParams) error {
 	_, err := r.queries.CreateEndpoint(ctx, db.CreateEndpointParams{
-		UserID:   params.userID,
-		Name:     params.serviceName,
-		Endpoint: params.endpoint,
+		UserID: params.userID,
+		Name:   params.serviceName,
+		Token:  params.endpoint,
 	})
 
 	if err != nil {

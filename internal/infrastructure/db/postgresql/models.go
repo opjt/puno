@@ -14,7 +14,7 @@ type Endpoint struct {
 	ID                     uuid.UUID
 	UserID                 uuid.UUID
 	Name                   string
-	Endpoint               string
+	Token                  string
 	NotificationEnabled    bool
 	NotificationDisabledAt *time.Time
 	CreatedAt              time.Time

@@ -2,7 +2,7 @@
 INSERT INTO endpoints (
     user_id,
     name,
-    endpoint
+    token
 ) VALUES (
     $1, 
     $2, 
@@ -13,3 +13,8 @@ RETURNING *;
 -- name: FindByUserID :many
 SELECT * FROM endpoints
 WHERE user_id = $1;
+
+-- name: DeleteEndpointByToken :exec
+DELETE FROM endpoints
+WHERE token = $1
+  AND user_id = $2;

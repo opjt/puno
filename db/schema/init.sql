@@ -26,7 +26,7 @@ CREATE TABLE
         id UUID PRIMARY KEY DEFAULT uuidv7(),
         user_id UUID NOT NULL REFERENCES users (id),
         name TEXT NOT NULL,
-        endpoint TEXT NOT NULL UNIQUE,
+        token TEXT NOT NULL UNIQUE,
         notification_enabled BOOLEAN NOT NULL DEFAULT true,
         notification_disabled_at TIMESTAMP NULL,
         created_at TIMESTAMP NOT NULL DEFAULT now(),

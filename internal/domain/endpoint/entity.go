@@ -9,6 +9,6 @@ import (
 type Endpoint struct {
 	ID        uuid.UUID
 	Name      string
-	Endpoint  string
+	Token     string
 	CreatedAt time.Time
 }

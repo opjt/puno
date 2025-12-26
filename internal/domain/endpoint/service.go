@@ -61,6 +61,10 @@ func (s *EndpointService) Add(ctx context.Context, serviceName string) error {
 	return errors.New("endpoint generate fail")
 }
 
+func (s *EndpointService) Remove(ctx context.Context, endpoint string) error {
+
+	return nil
+}
 func (s *EndpointService) genEndpoint() (string, error) {
 	endpoint, err := token.GenerateEndpointToken(endpointLength)
 	if err != nil {
