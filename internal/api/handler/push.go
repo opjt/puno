@@ -25,7 +25,7 @@ func (h *PushHandler) Routes() chi.Router {
 	r := chi.NewRouter()
 	r.Post("/subscribe", wrapper.WrapJson(h.Subscribe, h.log.Error, wrapper.RespondJSON))
 	r.Post("/unsubscribe", wrapper.WrapJson(h.Unsubscribe, h.log.Error, wrapper.RespondJSON))
-	r.Post("/push", wrapper.WrapJson(h.Push, h.log.Error, wrapper.RespondJSON))
+	r.Post("/push/{token}", wrapper.WrapJson(h.Push, h.log.Error, wrapper.RespondJSON))
 	return r
 }
 
@@ -84,18 +84,17 @@ func (h *PushHandler) Unsubscribe(ctx context.Context, req reqSubscribe) (interf
 }
 
 // Push, notification
-func (h *PushHandler) Push(ctx context.Context, req reqSubscribe) (interface{}, error) {
+type reqPush struct {
+	EndpointToken string `json:"token"`
+}
 
-	if err := h.service.Push(ctx, push.Subscription{
-		Endpoint: req.Endpoint,
-		P256dh:   req.Keys.P256dh,
-		Auth:     req.Keys.Auth,
-	}); err != nil {
+func (h *PushHandler) Push(ctx context.Context, req reqPush) (interface{}, error) {
+	token := chi.URLParamFromCtx(ctx, "token")
+	h.log.Info("...", "token", token)
+
+	if err := h.service.Push(ctx, token); err != nil {
 		return nil, err
 	}
-	h.log.Info("noti push", "endpoint", req.Endpoint)
-	return "success", nil
-}
-func (h *PushHandler) Broadcast(ctx context.Context, req any) error {
-	return nil
+
+	return nil, nil
 }

@@ -61,13 +61,33 @@ func (q *Queries) DeleteEndpointByToken(ctx context.Context, arg DeleteEndpointB
 	return err
 }
 
-const findByUserID = `-- name: FindByUserID :many
+const findEndpointByToken = `-- name: FindEndpointByToken :one
+SELECT id, user_id, name, token, notification_enabled, notification_disabled_at, created_at FROM endpoints
+WHERE token = $1
+`
+
+func (q *Queries) FindEndpointByToken(ctx context.Context, token string) (Endpoint, error) {
+	row := q.db.QueryRow(ctx, findEndpointByToken, token)
+	var i Endpoint
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.Name,
+		&i.Token,
+		&i.NotificationEnabled,
+		&i.NotificationDisabledAt,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
+const findEndpointByUserID = `-- name: FindEndpointByUserID :many
 SELECT id, user_id, name, token, notification_enabled, notification_disabled_at, created_at FROM endpoints
 WHERE user_id = $1
 `
 
-func (q *Queries) FindByUserID(ctx context.Context, userID uuid.UUID) ([]Endpoint, error) {
-	rows, err := q.db.Query(ctx, findByUserID, userID)
+func (q *Queries) FindEndpointByUserID(ctx context.Context, userID uuid.UUID) ([]Endpoint, error) {
+	rows, err := q.db.Query(ctx, findEndpointByUserID, userID)
 	if err != nil {
 		return nil, err
 	}

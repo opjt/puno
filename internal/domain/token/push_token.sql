@@ -16,3 +16,7 @@ DELETE FROM push_tokens
 WHERE endpoint = $1 
     AND p256dh_key = $2 
     AND auth_key = $3;
+
+-- name: FindTokenByUserID :many
+SELECT * FROM push_tokens
+WHERE user_id = $1;

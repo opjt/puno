@@ -41,7 +41,7 @@ func (h *EndpointHandler) Add(ctx context.Context, req reqAddEndpoint) (interfac
 		return nil, err
 	}
 
-	return "success", nil
+	return nil, nil
 }
 
 type resListEndpoint struct {

@@ -1,6 +1,10 @@
 package token
 
-import "context"
+import (
+	"context"
+
+	"github.com/google/uuid"
+)
 
 type TokenService struct {
 	repo TokenRepository
@@ -19,7 +23,11 @@ func (s *TokenService) Register(ctx context.Context, token Token) error {
 	return err
 }
 
-// token 삭제
+// token delete
 func (s *TokenService) Unregister(ctx context.Context, token Token) error {
 	return s.repo.RemoveToken(ctx, token)
+}
+
+func (s *TokenService) FindByUserID(ctx context.Context, userID uuid.UUID) ([]Token, error) {
+	return s.repo.FindByUserID(ctx, userID)
 }

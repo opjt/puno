@@ -7,7 +7,7 @@ DO UPDATE SET
 RETURNING id, email, created_at, updated_at;
 
 
--- name: FindById :one
+-- name: FindUserById :one
 SELECT id, email, created_at, updated_at
 FROM users
 WHERE id = $1;

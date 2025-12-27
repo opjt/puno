@@ -37,7 +37,7 @@ func (r *userRepository) UpsertUserByEmail(ctx context.Context, email string) (*
 }
 
 func (r *userRepository) FindByID(ctx context.Context, id uuid.UUID) (*User, error) {
-	user, err := r.queries.FindById(ctx, id)
+	user, err := r.queries.FindUserById(ctx, id)
 	if err != nil {
 		return nil, err
 	}

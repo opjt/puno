@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"ohp/internal/domain/endpoint"
 	"ohp/internal/domain/token"
 	"ohp/internal/pkg/config"
 
@@ -11,17 +12,25 @@ import (
 )
 
 type PushService struct {
-	repo     SubscriptionRepository
+	// repo     SubscriptionRepository
 	vapidKey config.Vapid
 
-	tokenService *token.TokenService
+	tokenService    *token.TokenService
+	endpointService *endpoint.EndpointService
 }
 
-func NewPushService(repo SubscriptionRepository, env config.Env, tokenService *token.TokenService) *PushService {
+func NewPushService(
+	// repo SubscriptionRepository,
+	env config.Env,
+
+	tokenService *token.TokenService,
+	endpointService *endpoint.EndpointService,
+) *PushService {
 	return &PushService{
-		repo:         repo,
-		vapidKey:     env.Vapid,
-		tokenService: tokenService,
+		// repo:            repo,
+		vapidKey:        env.Vapid,
+		tokenService:    tokenService,
+		endpointService: endpointService,
 	}
 }
 
@@ -36,14 +45,6 @@ func (s *PushService) Subscribe(ctx context.Context, sub Subscription) error {
 		return err
 	}
 
-	subs := &webpush.Subscription{
-		Endpoint: sub.Endpoint,
-		Keys: webpush.Keys{
-			P256dh: sub.P256dh,
-			Auth:   sub.Auth,
-		},
-	}
-	s.repo.Save(sub.Endpoint, subs)
 	return nil
 }
 
@@ -60,13 +61,36 @@ func (s *PushService) Unsubscribe(ctx context.Context, sub Subscription) error {
 	return nil
 }
 
-func (s *PushService) Push(ctx context.Context, sub Subscription) error {
+// Push notification using endpoint token
+func (s *PushService) Push(ctx context.Context, endpointToken string) error {
+
+	endpoint, err := s.endpointService.FindByToken(ctx, endpointToken)
+	if err != nil {
+		return err
+	}
+	userID := endpoint.UserID
+
+	tokens, err := s.tokenService.FindByUserID(ctx, userID)
+	if err != nil {
+		return err
+	}
+
+	for _, token := range tokens {
+		if err := s.pushNotification(token, "title1", "body4"); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (s *PushService) pushNotification(token token.Token, title, body string) error {
 
 	subs := &webpush.Subscription{
-		Endpoint: sub.Endpoint,
+		Endpoint: token.EndPoint,
 		Keys: webpush.Keys{
-			P256dh: sub.P256dh,
-			Auth:   sub.Auth,
+			P256dh: token.P256dh,
+			Auth:   token.Auth,
 		},
 	}
 
@@ -77,10 +101,8 @@ func (s *PushService) Push(ctx context.Context, sub Subscription) error {
 		Subscriber:      "jtpark1957@gmail.com",
 	}
 	payload := map[string]interface{}{
-		"title": "OhP test notification",
-		"body":  "PWA 푸시 알림 테스트 ",
-		// "icon":  "/icon-192x192.png",
-		// "badge": "/badge-72x72.png",
+		"title": title,
+		"body":  body,
 		"data": map[string]string{
 			"url":       "/",
 			"timestamp": fmt.Sprintf("%d", 1234567890),
@@ -96,6 +118,6 @@ func (s *PushService) Push(ctx context.Context, sub Subscription) error {
 	if err := resp.Body.Close(); err != nil {
 		return err
 	}
-
 	return nil
+
 }

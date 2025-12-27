@@ -29,6 +29,39 @@ func (q *Queries) DeleteToken(ctx context.Context, arg DeleteTokenParams) error 
 	return err
 }
 
+const findTokenByUserID = `-- name: FindTokenByUserID :many
+SELECT id, user_id, p256dh_key, auth_key, endpoint, is_active, created_at FROM push_tokens
+WHERE user_id = $1
+`
+
+func (q *Queries) FindTokenByUserID(ctx context.Context, userID uuid.UUID) ([]PushToken, error) {
+	rows, err := q.db.Query(ctx, findTokenByUserID, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []PushToken
+	for rows.Next() {
+		var i PushToken
+		if err := rows.Scan(
+			&i.ID,
+			&i.UserID,
+			&i.P256dhKey,
+			&i.AuthKey,
+			&i.Endpoint,
+			&i.IsActive,
+			&i.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const upsertToken = `-- name: UpsertToken :one
 INSERT INTO push_tokens (
     user_id,

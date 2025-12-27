@@ -11,14 +11,14 @@ import (
 	"github.com/google/uuid"
 )
 
-const findById = `-- name: FindById :one
+const findUserById = `-- name: FindUserById :one
 SELECT id, email, created_at, updated_at
 FROM users
 WHERE id = $1
 `
 
-func (q *Queries) FindById(ctx context.Context, id uuid.UUID) (User, error) {
-	row := q.db.QueryRow(ctx, findById, id)
+func (q *Queries) FindUserById(ctx context.Context, id uuid.UUID) (User, error) {
+	row := q.db.QueryRow(ctx, findUserById, id)
 	var i User
 	err := row.Scan(
 		&i.ID,

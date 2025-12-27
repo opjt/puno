@@ -27,9 +27,10 @@ func NewRouter(
 	r.Use(middle.CorsMiddleware(env.FrontUrl))
 
 	r.Mount("/auth", authHandler.Routes())
+	r.Mount("/push", pushHandler.Routes())
+
 	r.Group(func(r chi.Router) {
 		r.Use(middle.AuthMiddleware(tokenProvider))
-		r.Mount("/push", pushHandler.Routes())
 		r.Mount("/users", userHandler.Routes())
 		r.Mount("/endpoints", endpointHandler.Routes())
 	})

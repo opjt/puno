@@ -11,4 +11,5 @@ type Endpoint struct {
 	Name      string
 	Token     string
 	CreatedAt time.Time
+	UserID    uuid.UUID
 }
